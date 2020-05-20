@@ -1,0 +1,47 @@
+---
+title: "app"
+author: "Brian Panjaitan"
+date: "22/03/2020"
+output: html_document
+---
+Expanded the data table set to include more pokemon from different generations, following the same data format 
+
+```{r}
+if(!require(shiny)) install.packages("shiny", repos = "http://cran.us.r-project.org")
+if(!require(shinyWidgets)) install.packages("shinyWidgets", repos = "http://cran.us.r-project.org")
+if(!require(shinydashboard)) install.packages("shinydashboard", repos = "http://cran.us.r-project.org")
+if(!require(shinythemes)) install.packages("shinythemes", repos = "http://cran.us.r-project.org")
+library(shiny)
+
+source("lab7.R")
+ui <- fluidPage(
+  tags$h2("Countries Heavily Infected by COVID19"),
+  br(),
+  dropdown(
+
+    tags$h3("List of Countries"),
+
+    pickerInput(inputId = 'xcol2',
+                label = 'Country Names',
+                choices = country_names,
+                options = list(`style` = "btn-info")),
+
+    style = "unite", icon = icon("gear"),
+    status = "danger", width = "300px",
+    animate = animateOptions(
+      enter = animations$fading_entrances$fadeInLeftBig,
+      exit = animations$fading_exits$fadeOutRightBig
+    )
+  ),
+
+  plotOutput(outputId = 'plot2')
+)
+
+
+server <- function(input,output)
+{
+  
+}
+
+shinyApp(ui = ui, server = server)
+```

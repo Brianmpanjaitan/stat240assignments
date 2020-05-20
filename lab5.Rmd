@@ -1,0 +1,72 @@
+---
+title: "lab5"
+author: "Brian Panjaitan"
+date: "11/02/2020"
+output: html_document
+---
+Question 1a)
+```{r}
+library(tm)
+library(wordcloud)
+library(RColorBrewer)
+library(plyr)
+library(randomcoloR)
+
+
+fn = "ogAlice.txt"
+s = readChar(fn, file.info(fn)$size)
+x = strsplit(s, '\\s+')
+
+x = strsplit(tolower(s), '\\s+')
+x = unlist(x)[!(unlist(x) %in% stopwords('en'))]
+
+x = gsub('[[:punct:+]]', '', x)
+x = gsub("’", '', x, ignore.case = FALSE)
+
+x = trimws(x)
+t = table(x)
+
+layout(matrix(c(1, 2), nrow=2), heights=c(1, 4))
+par(mar=rep(0, 4))
+plot.new()
+text(x=0.5, y=0.5, "Word Cloud of Alice in the Wonderland")
+wordcloud(names(t),t, max.words = 20, random.color = TRUE, color = c("red","blue","pink","yellow","green","black","grey","purple","orange","violet"), main = "title")
+```
+
+Question 1b)
+```{r}
+system.time(for(i in 1:100) unlist(x)[!(unlist(x) %in% stopwords('en'))])
+```
+
+Question 1c)
+```{r}
+text = "alice.txt"
+newS = readChar(text, file.info(fn)$size)
+newS = trimws(newS)
+newX = strsplit(s, '\\s+')
+
+newText1 = gsub("'", "'", unlist(newX), ignore.case = TRUE)
+newText1 = gsub("'", "|", newText1, ignore.case = TRUE)
+
+newText2 = strsplit(newText1, '\\newText1+')
+newText2 = tolower(newText1)
+finalText = gsub("(?!')[[:punct:]]", "", newText2, perl = TRUE)
+tab = table(finalText)
+
+newX = strsplit(tolower(newS), '\\s+')
+text2 = (tab)[!((tab) %in% stopwords('en'))]
+
+newTable = table(tab)
+system.time(for(i in 1:100) unlist(newTable)[!(unlist(newTable) %in% stopwords('en'))])
+```
+
+Question 1d)
+```{r}
+```
+
+Question 2a)
+```{r}
+acronyms = c("REPL: Read-Eval-Print-Loop", "MVC: Model, View Controller", "SAAS: Software as a Service", "UI: User Interface", "IP: Internet Protocol", "BSD: Berkeley Software Distribution")
+tableAcronyms = as.data.frame(acronyms)
+tableAcronyms
+```

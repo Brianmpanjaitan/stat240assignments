@@ -1,0 +1,219 @@
+---
+title: "lab6"
+author: "Brian Panjaitan"
+date: "09/03/2020"
+output: html_document
+---
+
+```{r}
+library(selectr)
+library(xml2)
+library(rvest)
+library(stringr)
+library(jsonlite)
+library(magrittr)
+library(stringr)
+```
+
+QUESTION 1a
+```{r}
+course_url <- "https://www.sfu.ca/outlines.html?2020/spring/stat/240/d100"
+course_page <- read_html(course_url)
+
+tags <- course_page %>% html_nodes("h3")
+tags <- tags %>% html_text(trim = TRUE)
+text <- gsub("[\r\n]", "", text)
+
+tags
+```
+
+QUESTION 1b
+```{r}
+site_url <- "https://www.sfu.ca/outlines.html?2020/spring/stat/240/d100"
+site_page <- read_html(site_url)
+
+course_number <- site_page %>% html_nodes("h1")
+course_number <- course_number[-c(1:1)]
+course_number <- course_number %>% html_text(trim = TRUE)
+course_number <- gsub("[\r\n]","",course_number)
+
+course_number
+```
+
+QUESTION 1c
+```{r}
+course = function(siteurl)
+{
+  url <- siteurl
+  coursePage <- read_html(url)
+  
+  coursenumber <- coursePage %>% html_nodes("h1")
+  coursenumber <- coursenumber[-c(1:1)]
+  coursenumber <- coursenumber %>% html_text(trim = TRUE)
+  
+  instructor <- coursePage %>% html_node(".instructor")
+  instructor <- instructor %>% html_text(trim = TRUE)
+  instructor <- trimws(instructor)
+  instructor <- gsub("[\r\n]","",instructor)
+  
+  information <- data.frame(coursenumber, instructor)
+  return(information)
+}
+```
+siteurl = 'https://www.sfu.ca/outlines.html?2020/spring/stat/240/d100'
+result = course(siteurl)
+result$coursenumber
+result$instructor
+
+QUESTION 2a
+```{r}
+boxoffice = function()
+{
+  movie_url <- "https://www.imdb.com/chart/boxoffice"
+  movie_page <- read_html(movie_url)
+  
+  Names <- movie_page %>% html_nodes(".titleColumn")
+  Names <- Names %>% html_text(trim = TRUE)
+  Names <- gsub("[\r\n]","",Names)
+  
+  BoxOffice <- movie_page %>% html_nodes(".secondaryInfo")
+  BoxOffice <- BoxOffice %>% html_text(trim = TRUE)
+  BoxOffice <- gsub("[\r\n]","",BoxOffice)
+  
+  weeks <- movie_page %>% html_nodes(".weeksColumn")
+  weeks <- weeks %>% html_text(trim = TRUE)
+  weeks <- gsub("[\r\n]","",weeks)
+  
+  i = 1
+  j = 1
+  weeks_num <- weeks
+  boxOffice_num <- BoxOffice
+  
+  while(i <= 10)
+  {
+    boxOffice_num[i] <- as.numeric(regmatches(BoxOffice[i], gregexpr("[[:digit:]]+\\.*[[:digit:]]*",BoxOffice[i])))
+    i = i + 1
+  }
+  
+  PerWeek <- boxOffice_num
+  
+  while(j <= 10)
+  {
+    x <- as.numeric(PerWeek[j])
+    y <- as.numeric(weeks_num[j])
+    PerWeek[j] <- x/y
+    j = j + 1
+  }
+  
+  result <- data.frame(Names,BoxOffice,PerWeek)
+  return(result)
+}
+```
+
+QUESTION 2b)
+```{r}
+  movie_url <- "https://www.imdb.com/chart/boxoffice"
+  movie_page <- read_html(movie_url)
+  
+  Names <- movie_page %>% html_nodes(".titleColumn")
+  Names <- Names %>% html_text(trim = TRUE)
+  Names <- gsub("[\r\n]","",Names)
+  
+  BoxOffice <- movie_page %>% html_nodes(".secondaryInfo")
+  BoxOffice <- BoxOffice %>% html_text(trim = TRUE)
+  BoxOffice <- gsub("[\r\n]","",BoxOffice)
+  
+  weeks <- movie_page %>% html_nodes(".weeksColumn")
+  weeks <- weeks %>% html_text(trim = TRUE)
+  weeks <- gsub("[\r\n]","",weeks)
+  
+  ratingUrl1 <- ("https://www.rottentomatoes.com/m/onward")
+  ratingUrl2 <- ("https://www.rottentomatoes.com/m/i_still_believe")
+  ratingUrl3 <- ("https://www.rottentomatoes.com/m/bloodshot_2020")
+  ratingUrl4 <- ("https://www.rottentomatoes.com/m/the_invisible_man_2020")
+  ratingUrl5 <- ("https://www.rottentomatoes.com/m/the_hunt_2020")
+  ratingUrl6 <- ("https://www.rottentomatoes.com/m/sonic_the_hedgehog_2020")
+  ratingUrl7 <- ("https://www.rottentomatoes.com/m/the_way_back_2020")
+  ratingUrl8 <- ("https://www.rottentomatoes.com/m/the_call_of_the_wild_2020")
+  ratingUrl9 <- ("https://www.rottentomatoes.com/m/emma_2020")
+  ratingUrl10 <- ("https://www.rottentomatoes.com/m/bad_boys_for_life")
+
+  ratingPage1 <- read_html(ratingUrl1)
+  ratingPage2 <- read_html(ratingUrl2)
+  ratingPage3 <- read_html(ratingUrl3)
+  ratingPage4 <- read_html(ratingUrl4)
+  ratingPage5 <- read_html(ratingUrl5)
+  ratingPage6 <- read_html(ratingUrl6)
+  ratingPage7 <- read_html(ratingUrl7)
+  ratingPage8 <- read_html(ratingUrl8)
+  ratingPage9 <- read_html(ratingUrl9)
+  ratingPage10 <- read_html(ratingUrl10)
+  
+  RT <- weeks
+  
+  tmp <- ratingPage1 %>% html_nodes(".mop-ratings-wrap__percentage")
+  tmp <- tmp %>% html_text(trim = TRUE)
+  RT[1] <- tmp[c(1:1)]
+  
+  tmp <- ratingPage2 %>% html_nodes(".mop-ratings-wrap__percentage")
+  tmp <- tmp %>% html_text(trim = TRUE)
+  RT[2] <- tmp[c(1:1)]
+  
+  tmp <- ratingPage3 %>% html_nodes(".mop-ratings-wrap__percentage")
+  tmp <- tmp %>% html_text(trim = TRUE)
+  RT[3] <- tmp[c(1:1)]
+  
+  tmp <- ratingPage4 %>% html_nodes(".mop-ratings-wrap__percentage")
+  tmp <- tmp %>% html_text(trim = TRUE)
+  RT[4] <- tmp[c(1:1)]
+  
+  tmp <- ratingPage5 %>% html_nodes(".mop-ratings-wrap__percentage")
+  tmp <- tmp %>% html_text(trim = TRUE)
+  RT[5] <- tmp[c(1:1)]
+  
+  tmp <- ratingPage6 %>% html_nodes(".mop-ratings-wrap__percentage")
+  tmp <- tmp %>% html_text(trim = TRUE)
+  RT[6] <- tmp[c(1:1)]
+  
+  tmp <- ratingPage7 %>% html_nodes(".mop-ratings-wrap__percentage")
+  tmp <- tmp %>% html_text(trim = TRUE)
+  RT[7] <- tmp[c(1:1)]
+  
+  tmp <- ratingPage8 %>% html_nodes(".mop-ratings-wrap__percentage")
+  tmp <- tmp %>% html_text(trim = TRUE)
+  RT[8] <- tmp[c(1:1)]
+  
+  tmp <- ratingPage9 %>% html_nodes(".mop-ratings-wrap__percentage")
+  tmp <- tmp %>% html_text(trim = TRUE)
+  RT[9] <- tmp[c(1:1)]
+  
+  tmp <- ratingPage10 %>% html_nodes(".mop-ratings-wrap__percentage")
+  tmp <- tmp %>% html_text(trim = TRUE)
+  RT[10] <- tmp[c(1:1)]
+  
+  i = 1
+  j = 1
+  weeks_num <- weeks
+  boxOffice_num <- BoxOffice
+  
+  while(i <= 10)
+  {
+    boxOffice_num[i] <- as.numeric(regmatches(BoxOffice[i], gregexpr("[[:digit:]]+\\.*[[:digit:]]*",BoxOffice[i])))
+    i = i + 1
+  }
+  
+  PerWeek <- boxOffice_num
+  
+  while(j <= 10)
+  {
+    x <- as.numeric(PerWeek[j])
+    y <- as.numeric(weeks_num[j])
+    PerWeek[j] <- x/y
+    j = j + 1
+  }
+  result2 <- data.frame(Names,BoxOffice,PerWeek,RT)
+
+  result2
+```
+
+

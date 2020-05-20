@@ -1,0 +1,83 @@
+---
+title: "lab03"
+author: "Brian Panjaitan"
+date: "27/01/2020"
+output: html_document
+---
+
+```{r}
+library(RSQLite)
+library(DBI)
+
+dbcon = dbConnect(SQLite(), dbname='lab03.sqlite')
+dbListTables(dbcon)
+
+query = "PRAGMA table_info('Vanpoke')"
+dbGetQuery(dbcon, query)
+tail(dbReadTable(dbcon, "Olymp_meds"))
+```
+
+Question 1)
+There are 26 distinct years present among the medals
+```{r}
+sql_distinctyears_qry = "SELECT DISTINCT Edition FROM Olymp_meds"
+newjoin = dbGetQuery(dbcon, sql_distinctyears_qry)
+i = 0
+
+nrow(newjoin)
+```
+
+Question 2)
+```{r}
+sql_heightspokem_qry = "SELECT DISTINCT Height_m FROM Pokem ORDER BY Height_m DESC"
+newjoin2 = dbGetQuery(dbcon, sql_heightspokem_qry)
+
+dat = data.frame(newjoin2)
+dat
+```
+```{r}
+query = "SELECT Population__2011, Region FROM CA 
+          INNER JOIN POP2011 ON CA.Geographic_name=POP2011.Geographic_name 
+          WHERE province == 'Saskatchewan'"
+QuerryOut = dbSendQuery(dbcon, query)
+QuerryOut
+
+dbFetch(QuerryOut, 5)  #GET THE NTH ROW AND PUT INTO DATA.FRAME
+dbFetch(QuerryOut, -1) #GET REMAINING ROWS
+```
+
+
+Question 3a)
+```{r}
+van_qry = "SELECT CP FROM Vanpoke"
+new_join3 = dbGetQuery(dbcon, van_qry)
+hist(new_join3$cp, main = "Histogram of the Pokemon's Combat Power", xlab = "Value of Combat Power (CP)", ylab = "Frequency of Combat Power")
+```
+
+3b)
+```{r}
+dat = density(new_join3$cp)
+plot(dat, main = "Kernel Density of the Pokemon's Combat Power")
+```
+
+Lab4 Q2)
+```{r}
+library(rworldmap)
+library(MASS)
+library(sp)
+library(plotly)
+
+## Loading required package:  sp
+## ### Welcome to rworldmap ###
+## For a short introduction type :  vignette(’rworldmap’)
+library(rworldxtra)
+worldmap = getMap(resolution = "high")
+NrthAm = worldmap[which(worldmap$REGION =="North America"),] 
+plot(NrthAm, xlim=c(-123.35,-122.65),
+ylim=c(49,49.35), main = "Pokemon in Vancouver")
+
+qryVan= "SELECT longitude, latitude FROM Vanpoke"
+joinQry= dbGetQuery(dbcon, qryVan)
+points(joinQry$longitude, joinQry$latitude, pch = ".", col="red")
+
+```

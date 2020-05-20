@@ -1,0 +1,162 @@
+---
+title: "lab1"
+author: "Brian Panjaitan"
+date: "13/01/2020"
+output: html_document
+---
+
+1 Getting Started
+```{r}
+getwd()
+
+a = 2+2
+a
+
+(answer = 4-3*5+3*(1+2))
+
+w <- 2
+w = 1; (w <- 2)
+w = 1; (w < -2)
+
+radius = 4
+volume = 4/3*pi*radius^3
+
+radius = c(1,3,5,7)
+volume = 4/3*pi*radius^3
+
+plot(radius, volume, main = "title", xlab = "xlabel", ylab = "ylabel", ylim = c(0,1500), xlim = c(-1,9))
+```
+
+Problem 1
+```{r}
+radius = seq(1, 7, by = 2)
+volume = 4/3*pi*radius^3
+
+par(mfrow = c(2,2))
+plot(radius, volume, main = "Sphere's Radius & Volume \n using Lines", xlab = "Radius of Sphere", ylab = "Volume of Sphere", type = "l")
+plot(radius, volume, main = "Sphere's Radius & Volume \n using Points", xlab = "Radius of Sphere", ylab = "Volume of Sphere", type = "p")
+plot(radius, volume, main = "Sphere's Radius & Volume \n using Nothing", xlab = "Radius of Sphere", ylab = "Volume of Sphere", type = "n")
+plot(radius, volume, main = "Sphere's Radius & Volume \n using Both Lines and Points", xlab = "Radius of Sphere", ylab = "Volume of Sphere", type = "b")
+```
+
+Problem 2
+```{r}
+rad = seq(1,10000)
+volume = 4/3*pi*rad^3
+
+plot(rad, volume, main = "Plot of a Sphere's \n Radius vs Volume using Lines (Radius = 10,000)", xlab = "Radius of Sphere", ylab = "Volume of Sphere")
+```
+
+Problem 3
+```{r}
+x = seq(1,10)
+
+exponential = 2^x
+
+squared = x^2
+
+par(mfrow = c(1,1))
+plot(x, exponential, main = "Plot of a 2^x Function ", xlab = "Value of X", ylab = "The value of 2^x", type = "l")
+
+plot(x, squared, main = "Plot of a x^2 Function ", xlab = "Value of X", ylab = "The value of x^2", type = "l")
+
+```
+
+
+```{r}
+poke = read.csv(file = "pokemon.csv", header = TRUE, sep = ",")
+head(poke)
+names(poke)
+
+plot(poke[,"Type_1"], horiz=TRUE,las=2)
+```
+Problem 4a)
+```{r}
+constraint1 = which(poke[,"Height_m"] > 2 & poke[, "isLegendary"] == 'True')
+constraint1
+```
+
+
+Probelm 4b)
+```{r}
+constraints2 = which(poke[,"Body_Style"] == 'head_arms' | poke[,"Body_Style"] == 'serpentine_body')
+constraints2
+attack = constraints2[poke[,"Attack"]]
+defense = constraints2[poke[,"Defense"]]
+
+plot(attack, defense, main = "Attack vs Defense of 'Serpentine' or 'Head Arm' bodied pokemon", xlab = "Attack of the pokemon", ylab = "Defense of the pokemon", type = "p")
+```
+```{r}
+```
+pokenew = poke[1,]*NA
+pokenew$Name = "Brian"
+pokenew$Type_1 = "student"
+pokemonextra = rbind(pokenew,poke)
+
+is.data.frame(poke)
+
+is.data.frame(pokemonextra)
+
+is.numeric(poke[,"Type_1"])
+is.numeric(pokemonextra[,"Type_1"])
+
+is.factor(poke[,"Type_1"])
+
+is.factor(pokemonextra[,"Type_1"])
+
+poke[1:5,"Type_1"]
+pokemonextra[1:5,"Type_1"]
+
+unique(poke[,"Type_1"])
+pokemonextra[,"Type_1"] = factor(pokemonextra[,"Type_1"])
+pokemonextra[1:5, "Type_1"]
+
+as.numeric(poke[, "Type_1"])
+factor(poke[,"Attack"])
+
+levels(pokemonextra[,"Type_1"])
+levels(poke[,"Type_1"])
+
+save.image(file="AllOfMyWorkSpace.Rdata")
+save(poke,file="JustThePokeObject.Rdata")
+
+```{r}
+plot(poke[,"Attack"], poke[,"Defense"], ylab = "Defense", xlab = "Attack", col = poke[,"Generation"], pch = poke[,"Generation"], main = "Attack vs Defense \n of Different Generation Pokemon")
+
+paste("generation",1:6)
+legend(x=25,y=225,col=1:6,pch=1:6,paste("generation",1:6))
+
+boxplot(poke[,"Attack"] ~ poke[,"Type_1"], main="Pokemon Attacks by Type_1",las=2)
+
+boxplot(poke[,"HP"] ~ poke[,"Type_1"], main="Pokemon HP by Type_1",las=2)
+```
+
+```{r}
+```
+install.packages("RSQLite")
+library(RSQLite)
+
+```{r}
+A = function(B)
+{
+  C = B + 7;
+  return(C)
+}
+A(22)
+```
+
+Problem 5
+```{r}
+fibonnacci = function(n)
+{
+  if(n <= 1)
+  {
+    return(n)
+  }
+  else
+  {
+    return(fibonnacci(n-1) + fibonnacci(n-2))
+  }
+}
+fibonnacci(20)
+```

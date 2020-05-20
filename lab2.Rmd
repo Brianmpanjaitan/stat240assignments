@@ -1,0 +1,110 @@
+---
+title: "lab2"
+author: "Brian Panjaitan"
+date: "25/01/2020"
+output: html_document
+---
+
+```{r}
+library(RSQLite)
+library(DBI)
+
+dbcon = dbConnect(SQLite(), dbname = "lab02.sqlite")
+dbListTables(dbcon)
+
+head(dbReadTable(dbcon, "zip"))
+names(dbReadTable(dbcon, "zip"))
+head(dbReadTable(dbcon, "POP2006"))
+```
+
+Question 1a)
+The column names are zip_code, latitude, longitude, city, state, and country.
+
+```{r}
+tail(dbReadTable(dbcon, "CA"))
+tail(dbReadTable(dbcon, "POP2011"))
+tail(dbReadTable(dbcon, "POP2006"))
+```
+Question 1b)
+The last 5 records in the data table 'CA' are
+1636	1636	CA	S9V	Lloydminster	                    Saskatchewan	SK	53.2835	-110.0016	4
+1637	1637	CA	S9X	Meadow Lake	                      Saskatchewan	SK	54.1335	-108.4347	4
+1638	1638	CA	Y0A	Southeastern  Yukon (Watson Lake)	Yukon	        YT	61.5793	-131.1481	NA
+1639	1639	CA	Y0B	Central Yukon (Dawson City)	      Yukon	        YT	64.6450	-137.5360	NA
+1640	1640	CA	Y1A	Whitehorse	                      Yukon	        YT	60.7161	-135.0537	4
+
+Question 1c)
+The last 3 records in the data table 'POP2011' are
+1635	Y0A	NA	1758	1090	782
+1636	Y0B	NA	6538	4282	3028
+1637	Y1A	NA	25601	10887	10307
+
+Question 1d)
+There are 1624 records in the data table 'POP2006'
+
+```{r}
+sql_qry_latlon = "SELECT * FROM zip WHERE Latitude > 55 AND Longitude < -140"
+head(dbGetQuery(dbcon, sql_qry_latlon))
+```
+Question 2a)
+There are 1596 records returned by this query
+```{r}
+sql_qry = "SELECT * FROM zip WHERE state == 'IL'"
+head(dbGetQuery(dbcon, sql_qry))
+tail(dbGetQuery(dbcon, sql_qry))
+```
+Exercise
+sql_combine_qry = "SELECT * FROM tickets INNER JOIN zip ON tickets.zip_code = zip.zip_code"
+head(dbGetQuery(dbcon, sql_combine_qry))
+
+sql_combinePOP_qry = "SELECT * FROM POP2011 INNER JOIN POP2006 ON POP2011.Geographic_name = POP2006.Geographic_name"
+head(dbGetQuery(dbcon, sql_combinePOP_qry))
+
+sql_qry2  = "SELECT * FROM CA
+              INNER JOIN POP2011 ON
+                CA.Geographic_name =
+                POP2011.Geographic_name
+              WHERE
+                Total_private_dwellings__2011 == 0"
+join_eg  = dbGetQuery(dbcon, sql_qry2)
+join_eg
+
+Question 3a)
+```{r}
+sql_finelevel_qry = "SELECT latitude 
+                      FROM zip INNER JOIN tickets 
+                        ON zip.zip_code = tickets.zip_code
+                      WHERE fine_level1_amount > 100"
+join_eg2 = dbGetQuery(dbcon, sql_finelevel_qry)
+
+group<-sample(1,64916,TRUE)
+rowsum.data.frame(join_eg2, group, na.rm = TRUE)
+
+B<-na.omit(join_eg2)
+group<-sample(1,64876,TRUE)
+rowsum.data.frame(B,group)
+```
+
+
+```{r}
+library(rworldmap)
+library(sp)
+## ### Welcome to rworldmap ###
+## For a short introduction type :  vignette(’rworldmap’)
+library(rworldxtra)
+worldmap = getMap(resolution = "high")
+NrthAm = worldmap[which(worldmap$REGION=="North America"),]
+plot(NrthAm, col = "white", bg = "lightblue",
+  xlim = c(-140,-55), ylim = c(55,60))
+```
+
+```{r}
+sql_popandca_query = "SELECT * FROM POP2006 INNER JOIN CA ON POP2006.Geographic_name = CA.Geographic_name WHERE Population__2006 < 32589"
+
+join_eg3 = dbGetQuery(dbcon, sql_popandca_query)
+join_eg3
+
+plot(NrthAm, col = "white", bg = "lightblue", main = "Map of Locations in Canada with a population > 32589", xlab = "x-coordinates of location", ylab = "y-coordinates of location", xlim = c(-140,-55), ylim = c(55,60))
+
+points(sql_popandca_query["longitude"], sql_popandca_query["latitude"], col = 'red', pch = 16)
+```

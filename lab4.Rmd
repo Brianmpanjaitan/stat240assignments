@@ -1,0 +1,160 @@
+---
+title: "lab4"
+author: "Brian Panjaitan"
+date: "03/02/2020"
+output: html_document
+---
+Question 1a)
+```{r}
+count = function(x,n) 
+{ 
+  vector1 <- vector("list", n) 
+  vector2 <- vector("list", n) 
+  min = min(x) 
+  max = max(x) 
+  interval = (max - min)/n 
+  i = 1 
+  j = 1 
+  k = 1 
+  while(i <= n) 
+  { 
+    vector1[[i]] <- min 
+    min = min + interval - 0.01 
+    if(i < n) 
+    { 
+      vector2[[i]] <- min 
+    } 
+    else if(i == n) 
+    { 
+      vector2[[i]] <- max 
+    } 
+    min = min + 0.01 
+    i = i + 1 
+  } 
+  intervalVector = array(c(vector1, vector2), dim = c(n, 2)) 
+  returningVector <- vector("list", n) 
+  while(j <= length(x)) 
+  { 
+    k = 1 
+    while(k <= n) 
+    { 
+      if(x[[j]] >= vector1[[k]] && x[[j]] <= vector2[[k]]) 
+      { 
+        if(length(returningVector[[k]]) == 0) 
+        { 
+          returningVector[[k]] = 1 
+        } 
+        else 
+        { 
+            currValue = returningVector[[k]] + 1 
+            returningVector[[k]] = currValue 
+        } 
+      } 
+      k = k + 1 
+    } 
+    j = j + 1 
+  } 
+  return(returningVector) 
+}
+
+a = c(1,1,2,2,3)
+b = 3
+count(a,b)
+```
+
+Question 1b)
+```{r}
+histo = function(x, n) 
+{ 
+  vector1 <- vector("list", n)
+  vector2 <- vector("list", n)
+  
+  min = min(x)
+  max = max(x)
+  interval = (max - min)/n
+  i = 1
+  
+  while(i <= n)
+  {
+    vector1[[i]] <- min
+    min = min + interval
+    if(i < n)
+    {
+      vector2[[i]] <- min
+    }
+    else if(i == n)
+    {
+      vector2[[i]] <- max
+    }
+    i = i + 1
+  }
+  intervalVector = array(c(vector1, vector2), dim = c(n, 2))
+  
+  vector = count(x,n)
+  i = 1
+  j = 1
+  min = 1
+  max = 1
+  
+  while(i <= n)
+  {
+    if(length(vector[[i]]) == 0)
+    {
+      max = 0
+    }
+    else if(vector[[i]] >= max)
+    {
+      max = vector[[i]]
+    }
+    i = i + 1
+  }
+  
+  plot(1, main = "Histogram of Number of Counts in each Bin", type = "n", xlab = "Bin Number", ylab = "Number of counts per interval",xlim = c(0,n), ylim = c(0, max))
+  while(j <= n)
+  {
+    if(length(vector1[[j]]) == 0)
+    {
+      vector1[[j]] = 0
+    }
+    if(length(vector2[[j]]) == 0)
+    {
+      vector2[[j]] = 0
+    }
+    if(length(vector[[j]]) == 0)
+    {
+      vector[[j]] = 0
+    }
+    
+    r1 = c(j-1, j-1)
+    c1 = c(0, vector[[j]])
+    
+    r2 = c(j, j)
+    c2 = c(0, vector[[j]])
+    
+    r3 = c(j-1, j)
+    c3 = c(vector[[j]], vector[[j]])
+    
+    lines(r1, c1, type = "l")
+    lines(r2, c2, type = "l")
+    lines(r3, c3, type = "l")
+    j = j+1
+  }
+}
+a = c(1,1,2,2,3)
+b = 3
+histo(a,b)
+```
+
+Question 1c)
+```{r}
+firstHundred = rnorm(n = 100, mean = -1, sd = 1)
+secondHundred = rnorm(n = 100, mean = 1, sd = 1)
+test = c(firstHundred, secondHundred)
+histo(test, 10)
+```
+
+Question 1d)
+```{r}
+test2 = c(0,0,0,1,1,2)
+histo(test2, 3)
+```

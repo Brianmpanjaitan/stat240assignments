@@ -1,0 +1,60 @@
+---
+title: "lab7"
+author: "Brian Panjaitan"
+date: "19/03/2020"
+output: html_document
+---
+```{r}
+
+corona_data = coronavirus_today
+
+number_of_cases <- corona_data$cases
+country_names <- corona_data$country
+heavily_infected <- 1:154
+
+x = data.frame(country_names, number_of_cases)
+y = data.frame(heavily_infected)
+
+i = 1
+while (i <= 154) 
+{
+  if(x$number_of_cases[i] >= 50)
+  {
+    y$heavily_infected[i] = 1
+  }
+  else
+  {
+    y$heavily_infected[i] = 0
+  }
+  i = i + 1
+}
+
+cdata = data.frame(country_names, number_of_cases, y)
+cdata
+
+keep <- c(1:154)
+
+j = 1
+infected <- data.frame(NULL,NULL)
+not_infected <- data.frame(NULL,NULL)
+
+
+while(j <= 154)
+{
+  if(y$heavily_infected[j] == 1)
+  {
+    infected <- rbind(infected, list(cdata$number_of_cases[j],cdata$heavily_infected[j]))
+  }
+  else
+  {
+    not_infected <- rbind(not_infected, list(cdata$number_of_cases[j],cdata$heavily_infected[j]))
+  }
+  j = j + 1
+}
+
+d1 <- density(infected$X59)
+d2 <- density(not_infected$X22)
+plot1 <- plot(d1)
+plot2 <- plot(d2)
+
+```
